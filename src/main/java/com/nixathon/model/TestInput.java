@@ -2,6 +2,10 @@ package com.nixathon.model;
 
 import java.util.Date;
 import java.util.Objects;
+import java.util.Optional;
+
+import org.bson.Document;
+import org.bson.types.ObjectId;
 
 public class TestInput {
 
@@ -26,6 +30,22 @@ public class TestInput {
     this.id = id;
     this.created = created;
     this.input = input;
+  }
+
+  public static TestInput toTestInput(Document document) {
+    var testInput = new TestInput();
+    testInput.setId(String.valueOf(document.getObjectId("_id")));
+    testInput.setInput(document.getString("input"));
+    testInput.setCreated(document.getDate("created"));
+    return testInput;
+  }
+
+  public static Document toDocument(TestInput testInput) {
+    var document = new Document();
+    Optional.ofNullable(testInput.getId()).ifPresent(id -> document.put("_id", new ObjectId(id)));
+    document.put("input", testInput.getInput());
+    document.put("created", testInput.getCreated());
+    return document;
   }
 
   public void setId(String id) {
